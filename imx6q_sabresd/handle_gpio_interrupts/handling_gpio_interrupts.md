@@ -80,6 +80,20 @@ $ echo rising > edge
 ## 应用层获取192管脚 GPIO 中断请求
 
 用 open 打开 `/sys/class/gpio/gpio192/value` 文件：
+```c
+fd = open(argv[1], O_RDONLY);
+```
 
-https://github.com/ClarenceYk/Clarence-Learning-Notes/blob/f0f5c6732c359e6f37a17632118b790bf608eeb1/imx6q_sabresd/handle_gpio_interrupts/handle_gpio_interrupts.c#L23
+使用 poll 轮询 fd：
+```c
+res = poll(&gpio_poll_fd, 1, -1);
+```
 
+判断是否有中断请求：
+```c
+if ((gpio_poll_fd.revents & POLLPRI) == POLLPRI) {
+    // 处理中断请求
+}
+```
+
+完整的测试代码在[此处](https://github.com/ClarenceYk/Clarence-Learning-Notes/blob/master/imx6q_sabresd/handle_gpio_interrupts/handle_gpio_interrupts.c)。
