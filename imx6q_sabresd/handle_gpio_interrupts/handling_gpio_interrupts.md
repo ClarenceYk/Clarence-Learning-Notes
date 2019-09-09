@@ -97,3 +97,24 @@ if ((gpio_poll_fd.revents & POLLPRI) == POLLPRI) {
 ```
 
 完整的测试代码在[此处](https://github.com/ClarenceYk/Clarence-Learning-Notes/blob/master/imx6q_sabresd/handle_gpio_interrupts/handle_gpio_interrupts.c)。
+
+## 测试
+
+将管脚192与193相连接。
+
+运行测试程序：
+```shell
+$ ./handle_gpio_interrupts /sys/class/gpio/gpio192/value &
+```
+
+管脚193先输出0再输出1来模拟上升沿：
+```shell
+$ echo 0 > /sys/class/gpio/gpio193/value
+$ echo 1 > /sys/class/gpio/gpio193/value
+```
+
+可看到终端输出：
+```shell
+POLLPRI
+On New Value: 0
+```
