@@ -95,4 +95,3 @@ Combination of hardware and basic software components that provides the services
 - Proven in many different scenarios
 - Supported by a very large ecosystem of software
 - Royalty-free
-
