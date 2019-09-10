@@ -102,9 +102,8 @@ Multiple implementions of the reference hardware model are possible.
 
 ```
 +------------------------------------------------+
-| Microcontroller(MCU)                           |
+| System-on-Chip(SOC)                            |
 |                                                |
-|              System-on-Chip                    |
 |  +--------+  +-------------+  +-------------+  |
 |  |        |  |     CPU     |  |             |  |
 |  |  RAM   |  +-------+-----+  | Mass Memory |  |
