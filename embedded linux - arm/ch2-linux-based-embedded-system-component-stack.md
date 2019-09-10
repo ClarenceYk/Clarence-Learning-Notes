@@ -58,6 +58,22 @@ Contianer for the Linux kernel configuration files, the system programs, and the
 
 Embedded System Hardware components:
 
+```
++----------------------------------------+
+| Embedded System Hardware               |
+|                                        |
+|  +--------+  +-----+  +-------------+  |
+|  |        |  |     |  | Boot Flash  |  |
+|  |        |  | CPU |  +-------------+  |
+|  |  RAM   |  |     |                   |
+|  | Memory |  +-----+  +-------------+  |
+|  |        |  +-----+  | Mass Memory |  |
+|  |        |  | I/O |  |    Flash    |  |
+|  +--------+  +-----+  +-------------+  |
+|                                        |
++----------------------------------------+
+```
+
 - RAM memory: volatile memory storing data/code
 - CPU: processor running software
 - I/O: peripherals to get inputs from the user, and to provide outputs to the user
@@ -66,11 +82,38 @@ Embedded System Hardware components:
 
 Multiple implementions of the reference hardware model are possible.
 
-TODO: Add Picture
+```
++----------------------------------+
+| Microcontroller(MCU)             |
+|                                  |
+|  +--------+-----+-------------+  |
+|  |        |     |             |  |
+|  |        | CPU | Boot Flash  |  |
+|  |  RAM   |     |             |  |
+|  | Memory +-----+-------------+  |
+|  |        | I/O | Mass Memory |  |
+|  |        |     |    Flash    |  |
+|  +--------+-----+-------------+  |
+|                                  |
++----------------------------------+
+```
 
 - Microcontroller-based implemention: a single device hosts most of the reference model components
 
-TODO: Add Picture
+```
++------------------------------------------------+
+| Microcontroller(MCU)                           |
+|                                                |
+|              System-on-Chip                    |
+|  +--------+  +-------------+  +-------------+  |
+|  |        |  |     CPU     |  |             |  |
+|  |  RAM   |  +-------+-----+  | Mass Memory |  |
+|  | Memory |  | Boot  | I/O |  |    Flash    |  |
+|  |        |  | Flash |     |  |             |  |
+|  +--------+  +-------+-----+  +-------------+  |
+|                                                |
++------------------------------------------------+
+```
 
 - System-on-Chip implemention: most of the reference model components are discrete components, while the CPU is integraded with some of them
 
@@ -105,16 +148,12 @@ At power-up, the program counter is set to a default known value, the reset vect
 
 Scenario 1, typical of microcontrollers
 
-TODO: Add Picture
-
 * All the software (bootloader + operating system + root filesystem) is stored in persistent storage (boot flash) embedded in the microcontroller.
 * All the software is executed from the persistent storage.
 * The CPU reset vector is located in the boot flash.
 * The RAM memory is embedded in the microcontroller and is used for data, stack and heap only.
 
 Scenario 2, typical of System-on-Chip
-
-TODO: Add Picture
 
 * The bootloader is stored into the boot flash.
 * The CPU reset vector is located at the boot flash.
@@ -125,13 +164,30 @@ TODO: Add Picture
 
 For a given SoC with the following memory map:
 
+```
++------------+ 0x0003_FFFF
+|   RAM      |
+|   Memory   |
+|            |
+|            |
+|            |
+|            |
++------------+ 0x0001_FFFF
+|   Mass     |
+|   Memory   |
+|   Flash    |
++------------+ 0x0000_FFFF
+|            |
+| Boot Flash |
+|            |
++------------+ 0x0000_0000
+```
+
 * RAM memory 512kB (arranged as 128k words, each 32 bits long), from 0x0002_0000 to 0x0003_FFFF
 * Mass memory flash 256kB (same origanization as before), from 0x0001_0000 to 0x0001_FFFF
 * Boot flash 256kB (same origanization as before), from 0x0000_0000 to 0x0000_FFFF
 
 #### Time: before power up
-
-TODO: Add Picture
 
 The boot flash is preloaded with bootloader:
 
@@ -162,8 +218,6 @@ The CPU executes bootloader software that:
 
 #### Time: end of bootstrap
 
-TODO: Add Picture
-
 The bootloader jumps to the first instruction of the operating system.
 
 The CPU now executes the operating system software, which is responsible for:
@@ -188,7 +242,24 @@ It offers services such as:
 
 The Linux kernel takes advantage of a layered operating system architectrue:
 
-TODO: Add picture
+```
+              +-----------------------------+
+            / |         Application         |
+   User Space +-----------------------------+
+            \ |       System Programs       |
+              +-----------------------------+
+            / |    System Call Interface    |
+           /  +--------------+--------------+
+          +   |   Process    | Virtual File |
+          |   |  Management  |    System    |
+Kernel Space  +--------------+--------------+
+          |   |    Memory    |    Network   |
+          |   |  Management  |  Management  |
+          +   +--------------+--------------+
+           \  |   Device     |   Loadable   |
+            \ |   Drivers    |   Module     |
+              +--------------+--------------+
+```
 
 * The operating system is divided into two layers, one (*user space*) built on top of the other (*Kernel space*).
 * User space and Kernel space are different address spaces.
