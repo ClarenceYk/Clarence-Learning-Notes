@@ -239,6 +239,116 @@ Intra-Kernel interfaces:
 * Swapfile Access: it controls the paging file access
 * Architecture-specific modules: They handle hardware-specific operations related to memory management (e.g. access to the MMU)
 
+#### Virtual File System
+
+It is responsible for handling:
+
+* Multiple hardware devices: it provides uniform access to hardware devices.
+* Multiple logical file systems: it supports many different logical organizations of information on storage media.
+* Multiple executable formats: it supports different executable file formats(e.g. a.out, ELF).
+* Homogeneity: it presents a common interface to all of the logical file systems and all hardware devices.
+* Performance: it provides high-speed access to files.
+* Safety: it enforces policies to not lose or corrupt data.
+* Security: it enforces policies to grant access to files only to allowed users, and it restricts user total file size with quotes.
+
+External interfaces:
+
+* System-call interface based on normal operations on file from the POSIX standard (e.g. open/close/write/read).
+* Intra-kernel interface based on i-node interface and file interface.
+
+##### i-node
+
+It stores all the information about a file excepts its name and the data it contains.
+
+When a file is created, it is assigned a name and a unique i-node number (a unique integer number).
+
+When a file is accessed
+
+* Each file is associated with a unique i-node number.
+* The i-node number is then used for accessing the data structure containing the information about the file being accessed.
+
+i-node interfaces:
+
+* "create", which creates a file in a directory
+* "lookup", which finds a file by name within a directory
+* "link", "symlink", "unlink", "readlink", or "follow link", which manages file system links
+* "mkdir", or "rmdir", which creates or removes a sub-directory
+* "mknod",  which creates a directory, special file, or regular file
+* "readpage", or "writepage", which reads or writes a page of physical memory
+* "truncate", which sets the length of a file to zero
+* "permission", which checks to see if a user process has permission to execute an operation
+* "smap", which maps a logical file block to a physical device sector
+* "bmap", which maps a logical file block to a physical device block
+* "rename", which renames a file or directory
+
+File interfaces:
+
+* "open" or "release", which opens or closes the file
+* "read" or "write", which reads or writes to the file
+* "select", which waits until the file is in a particular state, such as readable or writeable
+* "lseek", which moves to a particular offset in the file
+* "mmap", which maps a region of the file into the virtual memory of a user process
+* "fsync" or "fasync", which synchronizes any memory buffers with the physical device
+* "read dir", which reads the files that are pointed to by a directory file
+* "i o control", which sets file attributes
+* "check media change", which checks to see if a removable media has been removed
+* "revalidate", which verifies that all cached information is valid
+
+##### Virtual File System Architecture
+
+```
+                                                  +---------------------+
+                                                  | Logical file system |
++-----------+                                     |                     |
+|System-call+------------------------------------>+   +---+   +---+     |
+|interface  |                                     |   |ext|   |nfs|     |
++--+---+----+                       +-------------+   +---+   +---+     |
+   |   |                            |             |                     |
+   |   |                            |             |   +-----+ +---+     |
+   |   |   +-------------------+    |             |   |smbfs| |fat|     |
+   |   |   | Binary Executable |    |             |   +-----+ +---+     |
+   |   |   |                   |    |             |                     |
+   |   |   | +-----+    +---+  +<---+             |   +----+  +----+    |
+   |   |   | |a.out|    |ELF|  |                  |   |iofs|  |proc|    |
+   |   |   | +-----+    +---+  |                  |   +----+  +----+    |
+   |   |   +----------+--------+                  +---------------------+
+   |   |              |                                 |
+   |   |              |                                 |
+   |   |              |                                 v
+   |   |              |              +------------------+-----+
+   |   |              +------------->+     Buffer cache       |
+   |   |                             |                        |
+   |   |                             | +------+     +-------+ |
+   |   |                             | |buffer|     |kflushd| |
+   |   +----------------------+      | +------+     +-------+ |
+   |                          |      +------------+-----------+
+   |                          |                   |
+   |                          |                   |
++--|--------------------------|-------------------|----------------------+
+|  |      Device drivers      |                   |                      |
+|  v                          v                   v                      |
+| ++-------+        +---------+-------------------+--------------------+ |
+| |  char  |        |                       block                      | |
+| +--------+        +--------------------------------------------------+ |
++------------------------------------------------------------------------+
+```
+
+* System call interface: it provides Virtual File System services to user space
+* Logical file system: it provides a logical structure for the information stored in a storage medium
+  - Several logical file systems are supported (e.g. ext2, fat).
+  - All files appear the same to the user.
+  - The i-node is used to hide logical file system details.
+  - For each file, the corresponding logical file system type is stored in the i-node.
+  - Depending on the information in the i-node, the proper operations are activated when reading/writing a file in a given logical file system.
+* Buffer cache: it provides data caching mechanisms to improve performance of storage media access operations.
+* Binary executable: it supports different types of executable files transparently to the user.
+* Device drivers: provide a uniform interface to access hardware devices.
+  - Character-based devices are hardware devices access sequentially (e.g. serial port)
+  - Block-based devices are devices that are accessed randomly and whose data is read/written in blocks (e.g. hard disk unit).
+* Device drivers use the file interface abstraction:
+  - Each device can be accessed as a file in the file system through a special file, the device file, associated with it.
+  - A new device driver is a new implementing of the hardware-specific code to customize the file interface abstraction.
+
 ## Device trees
 
 ## The U-BOOT bootloader
