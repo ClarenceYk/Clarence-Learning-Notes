@@ -136,7 +136,7 @@ Linux 此时会创建一个形式为 `/dev/spidevX.Y` 设备节点，其中 X �
 
 测试程序源码[链接](https://raw.githubusercontent.com/raspberrypi/linux/rpi-3.10.y/Documentation/spi/spidev_test.c)。
 
-或者[此链接]()。
+或者[此链接](https://github.com/ClarenceYk/Clarence-Learning-Notes/blob/master/imx6q_sabresd/using_spi_with_linux/spidev_test.c)。
 
 下载源码并且编译之后，运行：
 
