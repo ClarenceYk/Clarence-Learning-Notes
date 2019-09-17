@@ -74,6 +74,36 @@ soc {
 
 ```
 
+#### 关闭 SD2 功能
+
+dtsi 文件 imx6qdl-sabresd.dtsi 中，将与 SD2 功能相关的定义注释掉：
+
+```
+// pinctrl_usdhc2: usdhc2grp {
+// 	fsl,pins = <
+// 		MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17059
+// 		MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10059
+// 		MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17059
+// 		MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
+// 		MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
+// 		MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
+// 		MX6QDL_PAD_NANDF_D4__SD2_DATA4		0x17059
+// 		MX6QDL_PAD_NANDF_D5__SD2_DATA5		0x17059
+// 		MX6QDL_PAD_NANDF_D6__SD2_DATA6		0x17059
+// 		MX6QDL_PAD_NANDF_D7__SD2_DATA7		0x17059
+// 	>;
+// };
+
+//&usdhc2 {
+//	pinctrl-names = "default";
+//	pinctrl-0 = <&pinctrl_usdhc2>;
+//	bus-width = <8>;
+//	cd-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
+//	wp-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+//	status = "okay";
+//};
+```
+
 #### IOMUX 配置
 
 dtsi 文件 imx6qdl-sabresd.dtsi 中：
