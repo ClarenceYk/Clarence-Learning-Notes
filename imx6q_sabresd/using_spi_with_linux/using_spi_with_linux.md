@@ -106,23 +106,27 @@ dtsi 文件 imx6qdl-sabresd.dtsi 中，将与 SD2 功能相关的定义注释掉
 
 #### IOMUX 配置
 
-dtsi 文件 imx6qdl-sabresd.dtsi 中：
+dts 文件 imx6q-sabresd.dts 中，添加：
 
 ```
-pinctrl_ecspi5: ecspi5grp {
-	fsl,pins = <
-		MX6QDL_PAD_SD2_DAT0__ECSPI5_MISO 0x100b1
-		MX6QDL_PAD_SD2_CMD__ECSPI5_MOSI	0x100b1
-		MX6QDL_PAD_SD2_CLK__ECSPI5_SCLK 0x100b1
-		MX6QDL_PAD_SD2_DAT1__GPIO1_IO14	0x1b0b0
-		MX6QDL_PAD_SD2_DAT2__GPIO1_IO13	0x1b0b0
-	>;
+&iomuxc {
+	imx6qdl-sabresd {
+		pinctrl_ecspi5: ecspi5grp {
+			fsl,pins = <
+				MX6QDL_PAD_SD2_DAT0__ECSPI5_MISO 0x100b1
+				MX6QDL_PAD_SD2_CMD__ECSPI5_MOSI	0x100b1
+				MX6QDL_PAD_SD2_CLK__ECSPI5_SCLK 0x100b1
+				MX6QDL_PAD_SD2_DAT1__GPIO1_IO14	0x1b0b0
+				MX6QDL_PAD_SD2_DAT2__GPIO1_IO13	0x1b0b0
+			>;
+		};
+	};
 };
 ```
 
 #### SPI 总线使能
 
-dtsi 文件 imx6qdl-sabresd.dtsi 中：
+dts 文件 imx6q-sabresd.dts 中，添加：
 
 ```
 &ecspi5 {
